@@ -8,7 +8,7 @@ import java.time.LocalTime
 
 /**
  * Servicio que gestiona la lógica de negocio de las reservas.
- * Depende de la abstracción IReservaRepository (principio DIP).
+ * Depende de la abstracción IReservaRepository.
  *
  * @param repositorio Repositorio inyectado por el constructor.
  */

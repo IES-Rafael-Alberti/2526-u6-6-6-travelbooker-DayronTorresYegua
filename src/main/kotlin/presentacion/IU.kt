@@ -70,9 +70,9 @@ class IU(private val servicio: ReservaService) {
     private fun crearReservaVuelo() {
         logger.info("Nueva Reserva de Vuelo")
         val descripcion = pedirTextoNoVacio("Descripción: ")
-        val origen      = pedirTextoNoVacio("Origen: ")
-        val destino     = pedirTextoNoVacio("Destino: ")
-        val horaVuelo   = pedirHora()
+        val origen = pedirTextoNoVacio("Origen: ")
+        val destino = pedirTextoNoVacio("Destino: ")
+        val horaVuelo = pedirHora()
 
         val reserva = servicio.crearReservaVuelo(descripcion, origen, destino, horaVuelo)
         logger.info("Reserva de vuelo creada:\n$reserva")
@@ -85,8 +85,8 @@ class IU(private val servicio: ReservaService) {
     private fun crearReservaHotel() {
         logger.info("Nueva Reserva de Hotel")
         val descripcion = pedirTextoNoVacio("Descripción: ")
-        val ubicacion   = pedirTextoNoVacio("Ubicación: ")
-        val noches      = pedirEnteroPositivo()
+        val ubicacion = pedirTextoNoVacio("Ubicación: ")
+        val noches = pedirEnteroPositivo()
 
         val reserva = servicio.crearReservaHotel(descripcion, ubicacion, noches)
         logger.info("Reserva de hotel creada:\n$reserva")
