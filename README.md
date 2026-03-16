@@ -139,31 +139,97 @@ Este conjunto de preguntas está diseñado para ayudarte a reflexionar sobre có
 #### **Criterio global 1: Instancia objetos y hacer uso de ellos**
 - **(2.a, 2.b, 2.c, 2.d, 2.f, 2.h, 4.e, 4.f)**: Describe cómo has instanciado y utilizado objetos en tu proyecto. ¿Cómo has aplicado los constructores y pasado parámetros a los métodos? Proporciona ejemplos específicos de tu código.
 
+He instanciado objetos usando el metodo crearInstancia que he definido en el companion object de cada clase.
+He usado el constructor privado para que nadie pueda crear una reserva directamente con ReservaVuelo(), de forma que para crear una instacia siempre se tenga que usar el metodo creaInstancia. Los parámetros se pasan directamente al método y este se encarga de construir el objeto. En ReservaService es donde se llama a estos métodos pasándole los datos que el usuario ha introducido por consola.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/servicios/ReservaService.kt#L20-L29
+
 #### **Criterio global 2: Crear y llamar métodos estáticos**
 - **(4.h)**: ¿Has definido algún método/propiedad estático en tu proyecto? ¿Cuál era el objetivo y por qué consideraste que debía ser estático en lugar de un método/propiedad de instancia?
+
+He definido métodos estáticos usando companion object en las clases ReservaVuelo y ReservaHotel. El método se llama creaInstancia y su objetivo es controlar cómo se crean las instancias, ya que el constructor es privado. Lo hice estático porque no necesita acceder a ninguna instancia concreta para funcionar: simplemente recibe unos datos y devuelve un objeto nuevo. Si fuera un método de instancia no tendría sentido porque necesitarías ya tener un objeto para poder crear otro.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/dominio/ReservaVuelo.kt#L47-L72
+
+También he declarado como estáticos el contador y el formatter en Reserva, ya que el contador debe ser compartido entre todas las reservas para que los IDs sean únicos y correlativos, y el formatter no cambia entre instancias.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/dominio/Reserva.kt#L36-L41
+
 - **(2.e)**: ¿En qué parte del código se llama a un método estático o se utiliza la propiedad estática?
+
+El método estático creaInstancia se llama desde ReservaService, en los métodos crearReservaVuelo y crearReservaHotel.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/servicios/ReservaService.kt#L26
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/servicios/ReservaService.kt#L39
 
 #### **Criterio global 3: Uso de entornos**
 - **(2.i)**: ¿Cómo utilizaste el IDE para el desarrollo de tu proyecto? Describe el proceso de creación, compilación, y prueba de tu programa.
 
+El proceso ha sido el siguiente: primero creé el proyecto con Gradle usando la plantilla de Kotlin JVM, lo que generó automáticamente los archivos build.gradle.kts y la estructura de carpetas. Después fui creando los paquetes y las clases una a una, empezando por el dominio y terminando por la presentación. Para compilar usé el botón de build del propio IDE. Para probar la aplicación la ejecuté directamente desde el Main.kt pulsando el botón de play que aparece junto a la función main. El IDE también me ayudó a detectar errores en tiempo real subrayando en rojo las líneas con problemas antes de compilar.
+
 #### **Criterio global 4: Definir clases y su contenido**
 - **(4.a, 4.b, 4.c, 4.d, 4.g)**: Explica sobre un ejemplo de tu código, cómo definiste las clases en tu proyecto, es decir como identificaste las de propiedades, métodos y constructores y modificadores del control de acceso a métodos y propiedades, para representar al objeto del mundo real. ¿Cómo contribuyen estas clases a la solución del problema que tu aplicación aborda?
+
+Voy a explicarlo con el ejemplo de ReservaHotel. Esta clase representa una reserva de hotel del mundo real, que tiene una ubicación y un número de noches. Para definirla pensé en qué información necesita guardar (propiedades), qué puede hacer (métodos) y quién puede acceder a qué (modificadores de acceso).
+
+Las propiedades ubicacion y numeroNoches son val porque una vez hecha la reserva no tiene sentido cambiarlas. El constructor es private para que nadie pueda crear una instancia directamente desde fuera. El método toString es público porque lo necesita cualquiera que quiera mostrar la reserva. La propiedad detalle sobreescribe la de la clase padre para añadir la información específica del hotel.
+
+Esta clase contribuye a la solución porque permite representar de forma clara y organizada una reserva de hotel, separando sus datos de la lógica de negocio y de la interfaz.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/dominio/ReservaHotel.kt#L16-L38
 
 #### **Criterio global 5: Herencia y uso de clases abstractas e interfaces**
 - **(4.g, 7.a, 7.b, 7.c, 7.i, 7.j)**: Describe sobre tu código cómo has implementado la herencia y/o utilizado interfaces en tu proyecto. ¿Por qué elegiste este enfoque y cómo beneficia a la estructura de tu aplicación? ¿De qué manera has utilizado los principios SOLID para mejorar el diseño de tu proyecto? Mostrando tu código, contesta qué principios has utilizado y qué beneficio has obtenido.
 
+He implementado herencia usando una clase abstracta Reserva como superclase. Elegí clase abstracta en lugar de interfaz porque Reserva tiene propiedades con estado (id, fechaCreacion) y lógica en el init, cosas que una interfaz no puede tener. Tanto ReservaVuelo como ReservaHotel heredan de ella con : Reserva(descripcion).
+
+Los principios SOLID que he aplicado son:
+
+**SRP (Responsabilidad Única):** cada clase tiene una sola responsabilidad. IU solo gestiona la consola, ReservaService solo gestiona la lógica de negocio, ReservaRepository solo gestiona el almacenamiento.
+
+**OCP (Abierto/Cerrado):** si quisiera añadir un nuevo tipo de reserva como ReservaExcursion solo tendría que crear una nueva clase que herede de Reserva, sin tocar el código existente.
+
+**DIP (Inversión de Dependencias):** ReservaService no depende de ReservaRepository directamente, sino de la interfaz IReservaRepository. Esto significa que podría cambiar el almacenamiento a una base de datos sin tocar el servicio.
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/datos/IReservaRepository.kt#L5-L8
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/servicios/ReservaService.kt#L15
+
 #### **Criterio global 6: Diseño de jerarquía de clases**
 - **(7.d, 7.e, 7.f, 7.g)**: Presenta la jerarquía de clases que diseñaste. ¿Cómo probaste y depuraste esta jerarquía para asegurar su correcto funcionamiento? ¿Qué tipo de herencia has utilizado: Especificación, Especialización, Extensión, Construcción?
+
+La jerarquía es la siguiente:
+
+Reserva (abstract)
+├── ReservaVuelo
+└── ReservaHotel
+
+El tipo de herencia que he utilizado es Especialización: las subclases añaden propiedades y comportamiento específico que la superclase no tiene (origen, destino, horaVuelo en el caso del vuelo; ubicacion, numeroNoches en el hotel). La superclase define el contrato común (id, fecha, descripción, detalle) y cada subclase lo especializa.
+Para depurarla ejecuté la aplicación y comprobé que al crear una reserva de vuelo y listarla después el detalle mostraba correctamente todos los campos específicos del vuelo, y lo mismo con el hotel. También verifiqué que no se podía instanciar Reserva directamente.
 
 #### **Criterio global 7: Librerías de clases**
 - **(2.g, 4.i)**: Describe cualquier librería externa que hayas incorporado en tu proyecto. Explica cómo y por qué las elegiste, y cómo las incorporaste en tu proyecto. ¿Cómo extendió la funcionalidad de tu aplicación? Proporciona ejemplos específicos de su uso en tu proyecto.
 
+He incorporado dos librerías externas, ambas añadidas en el build.gradle.kts:
+SLF4J + Logback: es un sistema de logging para Java/Kotlin. La elegí porque es el estándar más usado y permite controlar el nivel de los mensajes (INFO, WARN, ERROR) y guardarlos en un archivo de log automáticamente. Sin ella tendría que usar println para todo, sin poder diferenciar entre mensajes informativos y errores.
+
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/presentacion/IU.kt#L7
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/build.gradle.kts#L14-L15
+
 #### **Criterio global 8: Documentado**
 - **(7.h)**: Muestra ejemplos de cómo has documentado y comentado tu código. ¿Que herramientas has utilizado? ¿Cómo aseguras que tu documentación aporte valor para la comprensión, mantenimiento y depuración del código?
+
+He documentado el código usando KDoc, que es el sistema de documentación estándar de Kotlin. Cada clase tiene un comentario explicando su propósito y cada función tiene comentarios con @param y @return cuando es necesario. He usado IntelliJ IDEA para escribir la documentación, que ayuda autocompletando las etiquetas. La documentación aporta valor porque cualquier persona que lea el código entiende qué hace cada clase y método sin tener que leer toda la implementación.
+
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/presentacion/IU.kt#L109-L119
 
 #### **Criterio global 9: Genéricos**
 - **(6.f)**: Muestra ejemplos de tu código sobre cómo has implementado una clase con genéricos. ¿Qué beneficio has obtenido?
 
+He usado genéricos en la función pedirEntrada de IU.kt. Al escribir fun <T> pedirEntrada() le digo a Kotlin que esta función puede trabajar con cualquier tipo de dato, ya sea String, LocalTime, Int o cualquier otro. El beneficio es que no necesito escribir una función distinta para cada tipo de dato que quiera pedir al usuario: con una sola función genérica cubro todos los casos.
+
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/presentacion/IU.kt#L120-L128
+
 #### **Criterio global 10: Expresiones Regulares**
 - **(6.g)**: Muestra ejemplos de tu código donde hayas utilizado las expresiones regulares. ¿Qué beneficio has obtenido?
 
+He usado expresiones regulares en IU.kt para validar que la hora que introduce el usuario tenga el formato correcto HH:mm. La regex es:
+
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/presentacion/IU.kt#L19
+
+Esta expresión comprueba que la hora sea un número entre 00 y 23, seguido de dos puntos, seguido de minutos entre 00 y 59. Si el usuario escribe algo como 25:70 o abc, la regex lo rechaza y se le vuelve a pedir. El beneficio es que no tengo que escribir manualmente todas las comprobaciones numéricas: con una sola línea valido el formato completo.
+
+https://github.com/IES-Rafael-Alberti/2526-u6-6-6-travelbooker-DayronTorresYegua/blob/e7a560b83d6142fc6b2d9cf9b24f2b337f89069d/src/main/kotlin/presentacion/IU.kt#L142-L149
